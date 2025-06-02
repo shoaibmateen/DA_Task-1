@@ -1,28 +1,27 @@
 import pandas as pd
 
-# Load dataset
 df = pd.read_csv('netflix_titles.csv')
 
-# Preview basic info
-print(df.head())
-print(df.columns)
-print(df.info())
-print(df.describe(include='all'))
+print(f"Original shape: {df.shape}")
+print("\nMissing values before cleaning:")
+print(df.isnull().sum())
 
-# Fill missing values (basic forward fill as placeholder)
+duplicates_before = df.duplicated().sum()
+print(f"\nDuplicate rows before cleaning: {duplicates_before}")
+
 df.ffill(inplace=True)
-
-# Remove duplicates
 df.drop_duplicates(inplace=True)
-
-# Rename columns to lowercase, remove spaces
 df.columns = df.columns.str.strip().str.lower().str.replace(' ', '_')
 
-# Convert date_added to datetime
 if 'date_added' in df.columns:
     df['date_added'] = pd.to_datetime(df['date_added'], errors='coerce')
 
-# Save cleaned dataset
-df.to_csv('cleaned_netflix_titles.csv', index=False)
+print(f"\nShape after cleaning: {df.shape}")
+print("\nMissing values after cleaning:")
+print(df.isnull().sum())
 
-print("✅ Cleaning complete! Saved as cleaned_netflix_titles.csv")
+duplicates_after = df.duplicated().sum()
+print(f"\nDuplicate rows after cleaning: {duplicates_after}")
+
+df.to_csv('cleaned_netflix_titles.csv', index=False)
+print("\n✅ Cleaned dataset saved as 'cleaned_netflix_titles.csv'")
